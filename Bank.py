@@ -1,3 +1,6 @@
+
+
+
 def bank ():
     from datetime import datetime
     bank_accounts = {
@@ -48,8 +51,41 @@ def bank ():
             ("%Y-%m-%d %H:%M:%S", 0000, 0000, 000, "%Y-%m-%d %H:%M:%S", 0000, 0000, 000)]
     }
 
+    def printing_accounts (bank_accounts):
+        for account_number, details in bank_accounts.items():
+            print("\n")
+            print(f"Account Number: {account_number}")
+            for key, value in details.items():
+                print(f"{key}: {value}")
+            print(f"\n" + "-" *100 + "\n")
+
+    def account_by_number ():
+        account_number = int(input("Which Account would you Like to Display? "))
+        access_details = bank_accounts.get(account_number)
+        print("\n")
+        print(f"Account Number: {account_number}")
+        for key, value in access_details.items():
+            print(f"{key}: {value}")
+        print("\n")
+
+    def account_by_id():
+
+        for account_number, details in bank_accounts.items():
+            if details.get("id_number") == id_number:
+                acc_num = account_number
+                break
+            if account_number:
+                account_details = bank_accounts[account_number]
+                print(f"Account Number: {account_number}")
+                for key, value in account_details.items():
+                    print(f"{key}: {value}")
+            else:
+                print(f"No account found with ID number: {id_number}")
+
+
+
     while True:
-        operation: str = str(input(F"Hello, which operation would you like to perform? \n Open an New Account [N] \n Work on an Existing Account [E]"))
+        operation: str = str(input(F"Hello, which operation would you like to perform? \n Open an New Account [N] \n Work on an Existing Account [E] \n See Bank Reports [R]"))
         if operation.lower() == "n":
             print("Starting a new account creation process:")
             new_account_number: int = int(max(bank_accounts.keys())+1)
@@ -62,6 +98,7 @@ def bank ():
             "transactions_to_execute" : [],
             "transaction_history" : [],
             })
+            bank_accounts [new_account_number] = new_account
 
             print(f"New Account created successfully!\nAccount Number: {new_account_number}\nAccount Details: {bank_accounts[new_account_number]}")
         elif operation.lower() == "e":
@@ -99,6 +136,22 @@ def bank ():
                 else:
                     print("Sorry, this option is invalid")
                     continue
+        elif operation.lower() == "r":
+            report_operation: int = int(input("Would you like to: \nDisplay all Bank Reports [Press 1]\
+             \nLocate an Existing Account [Press 2]\
+              \nLocate Customer by ID [Press 3]\
+               \nDisplay all Accounts Sorted by Balance [Press 4]\
+                \nDisplay all Transactions Sorted by Time of Transaction [Press 5]\
+                 \nDisplay all Transactions from Today [Press 6] "))
+            match report_operation:
+                case 1: printing_accounts(bank_accounts)
+                case 2: account_by_number()
+                case 3: id_number = input("Please enter the ID number of the account to search for: ").strip()
+                        account_by_id()
+
+
+
+
     print(bank_accounts)
 
 print(bank())
