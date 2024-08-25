@@ -51,13 +51,15 @@ def bank ():
             ("%Y-%m-%d %H:%M:%S", 0000, 0000, 000, "%Y-%m-%d %H:%M:%S", 0000, 0000, 000)]
     }
 
+
+
+
     def printing_accounts (bank_accounts):
         for account_number, details in bank_accounts.items():
-            print("\n")
             print(f"Account Number: {account_number}")
             for key, value in details.items():
-                print(f"{key}: {value}")
-            print(f"\n" + "-" *100 + "\n")
+                print(f"{key.capitalize()}: {value}")
+            print(f"-" *100 + "\n")
 
     def account_by_number ():
         account_number = int(input("Which Account would you Like to Display? "))
@@ -65,23 +67,32 @@ def bank ():
         print("\n")
         print(f"Account Number: {account_number}")
         for key, value in access_details.items():
-            print(f"{key}: {value}")
+            print(f"{key.capitalize()}: {value}")
         print("\n")
 
     def account_by_id():
-
+        id_number = input("Please enter the ID number: ").strip()
+        accounts_found = []
         for account_number, details in bank_accounts.items():
-            if details.get("id_number") == id_number:
-                acc_num = account_number
-                break
-            if account_number:
-                account_details = bank_accounts[account_number]
+            if details['id_number'] == id_number:
+                accounts_found.append((account_number, details))
+        if accounts_found:
+            print(f"\nAccounts found for ID {id_number}:")
+            for account_number, access_details in accounts_found:
+                print("\n")
                 print(f"Account Number: {account_number}")
-                for key, value in account_details.items():
-                    print(f"{key}: {value}")
-            else:
-                print(f"No account found with ID number: {id_number}")
+                for key, value in access_details.items():
+                    print(f"{key.capitalize()}: {value}")
+                print("\n")
+        else:
+            print(f"\nNo accounts found for ID {id_number}.\n")
 
+    def sorted_by_balance():
+        sorted_accounts = (dict(sorted(bank_accounts.items(), key = lambda bank_accounts: bank_accounts[1]['balance'])))
+        for account_number, details in sorted_accounts.items():
+            for key, value in details.items():
+                print(f"{key.capitalize()}: {value}")
+            print(f"-" *100 + "\n")
 
 
     while True:
@@ -146,8 +157,9 @@ def bank ():
             match report_operation:
                 case 1: printing_accounts(bank_accounts)
                 case 2: account_by_number()
-                case 3: id_number = input("Please enter the ID number of the account to search for: ").strip()
-                        account_by_id()
+                case 3: account_by_id()
+                case 4: sorted_by_balance()
+
 
 
 
