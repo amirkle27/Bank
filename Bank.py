@@ -51,9 +51,6 @@ def bank ():
             ("%Y-%m-%d %H:%M:%S", 0000, 0000, 000, "%Y-%m-%d %H:%M:%S", 0000, 0000, 000)]
     }
 
-
-
-
     def printing_accounts (bank_accounts):
         for account_number, details in bank_accounts.items():
             print(f"Account Number: {account_number}")
@@ -86,6 +83,24 @@ def bank ():
                 print("\n")
         else:
             print(f"\nNo accounts found for ID {id_number}.\n")
+
+    def account_by_name ():
+        first_name = input("Please Enter Client's First Name: ").lower().strip()
+        accounts_found = []
+        for account_number, details in bank_accounts.items():
+            if details ['first_name'].lower() == first_name:
+                accounts_found.append((account_number,details))
+        if accounts_found:
+            print(f"\nAccounts Found for First Name: {first_name}\n")
+            for account_number, details in accounts_found:
+                print(f"Account Number: {account_number}")
+                for key, value in details.items():
+                    print(f"{key.capitalize()}: {value}")
+                print("\n" + "-" * 100 + "\n")
+        else:
+                print(f"\nNo accounts found for first name: {first_name}\n")
+
+
 
     def sorted_by_balance():
         sorted_accounts = (dict(sorted(bank_accounts.items(), key = lambda bank_accounts: bank_accounts[1]['balance'])))
@@ -151,14 +166,16 @@ def bank ():
             report_operation: int = int(input("Would you like to: \nDisplay all Bank Reports [Press 1]\
              \nLocate an Existing Account [Press 2]\
               \nLocate Customer by ID [Press 3]\
-               \nDisplay all Accounts Sorted by Balance [Press 4]\
-                \nDisplay all Transactions Sorted by Time of Transaction [Press 5]\
-                 \nDisplay all Transactions from Today [Press 6] "))
+               \nLocate Customer by First Name [Press 4]\
+                \nDisplay all Accounts Sorted by Balance [Press 5]\
+                 \nDisplay all Transactions Sorted by Time of Transaction [Press 6]\
+                  \nDisplay all Transactions from Today [Press 7] "))
             match report_operation:
                 case 1: printing_accounts(bank_accounts)
                 case 2: account_by_number()
                 case 3: account_by_id()
-                case 4: sorted_by_balance()
+                case 4: account_by_name()
+                case 5: sorted_by_balance()
 
 
 
