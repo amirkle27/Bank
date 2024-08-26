@@ -4,6 +4,10 @@ date_format = "%Y-%m-%d"
 
 def bank ():
     from datetime import datetime
+
+
+
+
     bank_accounts = {
         1001: {
             "first_name": "Alice",
@@ -119,64 +123,15 @@ def bank ():
                 print(f"{key.capitalize()}: {value}")
             print(f"-"* 100 + "\n")
 
+
     def today_transactions():
         today = datetime.today().date()
-
-        # Filter and sort past transactions for today only
-        today_accounts_past = {
-            account_number: {
-                **details,
-                "transaction_history": sorted(
-                    [trans for trans in details["transaction_history"]
-                     if datetime.strptime(trans[0], date_format).date() == today],
-                    key=lambda trans: datetime.strptime(trans[0], date_format).time()
-                )
-            }
-            for account_number, details in bank_accounts.items()
-            if any(datetime.strptime(trans[0], date_format).date() == today for trans in details["transaction_history"])
+        today_transactions = {account_number: details for account_number, details in bank_accounts.items()
+            if any(datetime.strptime(txn[0], "%Y-%m-%d %H:%M:%S").date() == today for txn in
+                   account_number['transactions_to_execute'])
         }
 
-        # Filter and sort future transactions to be executed today only
-        today_accounts_future = {
-            account_number: {
-                **details,
-                "transactions_to_execute": sorted(
-                    [trans for trans in details["transactions_to_execute"]
-                     if datetime.strptime(trans[0], date_format).date() == today],
-                    key=lambda trans: datetime.strptime(trans[0], date_format).time()
-                )
-            }
-            for account_number, details in bank_accounts.items()
-            if any(datetime.strptime(trans[0], date_format).date() == today for trans in
-                   details["transactions_to_execute"])
-        }
-
-        if today_accounts_past or today_accounts_future:
-            if today_accounts_past:
-                print("\nTransactions done Today (sorted by time): \n")
-                for account_number, details in today_accounts_past.items():
-                    print(f"Account Number: {account_number}")
-                    for key, value in details.items():
-                        if key == "transaction_history":
-                            for transaction in value:
-                                print(f"Transaction: {transaction}")
-                        else:
-                            print(f"{key.capitalize()}: {value}")
-                    print(f"-" * 100 + "\n")
-
-            if today_accounts_future:
-                print("\nTransactions to be done Today (sorted by time): \n")
-                for account_number, details in today_accounts_future.items():
-                    print(f"Account Number: {account_number}")
-                    for key, value in details.items():
-                        if key == "transactions_to_execute":
-                            for transaction in value:
-                                print(f"Transaction: {transaction}")
-                        else:
-                            print(f"{key.capitalize()}: {value}")
-                    print(f"-" * 100 + "\n")
-        else:
-            print("\nNo Transactions Today\n")
+        print(today_transactions)
 
 
     def negative_balance ():
@@ -290,10 +245,4 @@ def bank ():
             print("\nWrong Key, Please try again\n")
 
 
-if __name__ == "__main__":
-    bank()
-
-
-
-
-
+bank()
