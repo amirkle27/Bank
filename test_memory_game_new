@@ -1,0 +1,33 @@
+import memory_game
+import pytest
+
+
+game_data = memory_game.init_game()
+def test_len_cards ():
+    assert len(game_data ['cards']) == 16
+
+def test_choice1_not_choice2 ():
+    choice1 = (1,1)
+    choice2 = (1,1)
+    with pytest.raises(AssertionError) as ex:
+        assert str(ex.value) == "Choices must not be the same"
+
+def test_choice1_in_matched():
+    choice1 = (1, 1)
+    matched = [choice1]
+    with pytest.raises(AssertionError) as ex:
+        assert str(ex.value) == "One or both cards are already matched. Try again."
+
+def test_choice2_in_matched():
+    choice2 = (1, 1)
+    matched = [choice2]
+    with pytest.raises(AssertionError) as ex:
+        assert str(ex.value) == "One or both cards are already matched. Try again."
+
+def test_position_for_choice ():
+    choice1 = (1,1)
+    position = (choice1[0] - 1) * 4 + choice1[1]
+    assert position == 1
+
+
+
