@@ -1,9 +1,6 @@
 import time
 import random
 
-import pytest
-
-
 def init_game() -> dict:
     """
     Initializes the game data structure.
@@ -26,7 +23,6 @@ def init_game() -> dict:
         'flipped': {},
         'matched': set(),
         'move_history': [],
-        'cards' : [' A', ' A', ' B', ' B', ' C', ' C', ' D', ' D', ' E', ' E', ' F', ' F', ' G', ' G', ' H', ' H']
     }
     return game_data
 
@@ -44,7 +40,6 @@ def play(game_data) -> None:
     """
     board = game_data['board']
     cards_position = game_data['cards_position']
-    flipped = game_data['flipped']
     matched = game_data['matched']
     scores = game_data['score']
 
@@ -53,44 +48,59 @@ def play(game_data) -> None:
         turn = game_data['turn']
         print(f"{turn}'s turn: ".center(30,"="))
 
+        # First card selection
         try:
             choice1 = tuple(map(int, input("\nChoose first card (X,Y): ").split(",")))
-            board[choice1[0] - 1][choice1[1] - 1] = cards_position[(choice1[0] - 1) * 4 + choice1[1]]
-            display_board(board)
-            choice2 = tuple(map(int, input("Choose second card (X,Y): ").split(",")))
-            board[choice2[0] - 1][choice2[1] - 1] = cards_position[(choice2[0] - 1) * 4 + choice2[1]]
-            if choice1 == choice2:
-                print ("Choices must not be the same")
+            card_index1 = (choice1[0] - 1) * 4 + choice1[1]  # Calculate index from (row, col)
+            if card_index1 in matched:
+                print("This card is already matched. Choose a different card.")
                 continue
-            if choice1 in matched or choice2 in matched:
-                print("One or both cards are already matched. Try again.")
-                continue
+            board[choice1[0] - 1][choice1[1] - 1] = cards_position[card_index1]
             display_board(board)
+        except (ValueError, IndexError, KeyError):
+            print("Invalid input. Please enter coordinates as X,Y within the grid.")
+            continue
 
-            # Check for match
-            if board[choice1[0] - 1][choice1[1] - 1] == board[choice2[0] - 1][choice2[1] - 1]:
-                print("It's a match!".center(30,"-"))
-                matched.add(choice1)
-                matched.add(choice2)
-                scores[turn] += 1
-            else:
-                print("No match. Try again.".center(30,"-"))
-                time.sleep(1)
-                board[choice1[0] - 1][choice1[1] - 1] = " *"
-                board[choice2[0] - 1][choice2[1] - 1] = " *"
-
-            # Check if the game is over
-            if len(matched) == 16:
-                print(f"Game Over! Final Scores: {scores}")
-                game_data['game_over'] = True
+        # Second card selection
+        while True:
+            try:
+                choice2 = tuple(map(int, input("Choose second card (X,Y): ").split(",")))
+                card_index2 = (choice2[0] - 1) * 4 + choice2[1]  # Calculate index from (row, col)
+                if choice2 == choice1:
+                    print("You cannot choose the same card twice. Choose a different card.")
+                    continue
+                if card_index2 in matched:
+                    print("This card is already matched. Choose a different card.")
+                    continue
+                board[choice2[0] - 1][choice2[1] - 1] = cards_position[card_index2]
                 break
+            except (ValueError, IndexError, KeyError):
+                print("Invalid input. Please enter coordinates as X,Y within the grid.")
 
+        display_board(board)
+
+        # Check for match
+        if board[choice1[0] - 1][choice1[1] - 1] == board[choice2[0] - 1][choice2[1] - 1]:
+            print("It's a match!".center(30,"-"))
+            matched.add(card_index1)
+            matched.add(card_index2)
+            scores[turn] += 1
+            print(f"Keep going! It's {turn}'s turn again!".center(50, "="))
+        else:
+            print("No match. Try again.".center(30,"-"))
+            time.sleep(1)
+            board[choice1[0] - 1][choice1[1] - 1] = " *"
+            board[choice2[0] - 1][choice2[1] - 1] = " *"
             # Switch turns
             game_data['turn'] = 'Player 2' if turn == 'Player 1' else 'Player 1'
 
-        except (ValueError, IndexError):
-            print("Invalid input. Please enter coordinates as X,Y within the grid.")
-            continue
+        # Check if the game is over
+        if len(matched) == 16:
+            print(f"Game Over! Final Scores: {scores}")
+            game_data['game_over'] = True
+            break
+
+
 
 if __name__ == "__main__":
     game_data = init_game()
