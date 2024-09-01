@@ -1,0 +1,97 @@
+import time
+import random
+
+import pytest
+
+
+def init_game() -> dict:
+    """
+    Initializes the game data structure.
+
+    Returns:
+        dict: A dictionary containing game settings, including the number of rows and columns,
+              player scores, the game board, and other necessary game state information.
+    """
+    cards = [' A', ' A', ' B', ' B', ' C', ' C', ' D', ' D', ' E', ' E', ' F', ' F', ' G', ' G', ' H', ' H']
+    random.shuffle(cards)
+
+    game_data = {
+        'rows': 4,
+        'columns': 4,
+        'score': {'Player 1': 0, 'Player 2': 0},
+        'turn': 'Player 1',
+        'game_over': False,
+        'board': [[" *" for _ in range(4)] for _ in range(4)],
+        'cards_position': {i + 1: cards[i] for i in range(16)},
+        'flipped': {},
+        'matched': set(),
+        'move_history': [],
+        'cards' : [' A', ' A', ' B', ' B', ' C', ' C', ' D', ' D', ' E', ' E', ' F', ' F', ' G', ' G', ' H', ' H']
+    }
+    return game_data
+
+def display_board(board):
+    print("  1  2  3  4")
+    for i, row in enumerate(board, 1):
+        print(f"{i}{' '.join(row)}")
+
+def play(game_data) -> None:
+    """
+    Runs the main game loop, handling player turns, guessing, and score updates.
+
+    Args:
+        game_data (dict): The game data dictionary containing the board, scores, and other game information.
+    """
+    board = game_data['board']
+    cards_position = game_data['cards_position']
+    flipped = game_data['flipped']
+    matched = game_data['matched']
+    scores = game_data['score']
+
+    while not game_data['game_over']:
+        display_board(board)
+        turn = game_data['turn']
+        print(f"{turn}'s turn: ".center(30,"="))
+
+        try:
+            choice1 = tuple(map(int, input("\nChoose first card (X,Y): ").split(",")))
+            board[choice1[0] - 1][choice1[1] - 1] = cards_position[(choice1[0] - 1) * 4 + choice1[1]]
+            display_board(board)
+            choice2 = tuple(map(int, input("Choose second card (X,Y): ").split(",")))
+            board[choice2[0] - 1][choice2[1] - 1] = cards_position[(choice2[0] - 1) * 4 + choice2[1]]
+            if choice1 == choice2:
+                print ("Choices must not be the same")
+                continue
+            if choice1 in matched or choice2 in matched:
+                print("One or both cards are already matched. Try again.")
+                continue
+            display_board(board)
+
+            # Check for match
+            if board[choice1[0] - 1][choice1[1] - 1] == board[choice2[0] - 1][choice2[1] - 1]:
+                print("It's a match!".center(30,"-"))
+                matched.add(choice1)
+                matched.add(choice2)
+                scores[turn] += 1
+            else:
+                print("No match. Try again.".center(30,"-"))
+                time.sleep(1)
+                board[choice1[0] - 1][choice1[1] - 1] = " *"
+                board[choice2[0] - 1][choice2[1] - 1] = " *"
+
+            # Check if the game is over
+            if len(matched) == 16:
+                print(f"Game Over! Final Scores: {scores}")
+                game_data['game_over'] = True
+                break
+
+            # Switch turns
+            game_data['turn'] = 'Player 2' if turn == 'Player 1' else 'Player 1'
+
+        except (ValueError, IndexError):
+            print("Invalid input. Please enter coordinates as X,Y within the grid.")
+            continue
+
+if __name__ == "__main__":
+    game_data = init_game()
+    play(game_data)
