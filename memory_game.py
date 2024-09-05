@@ -102,3 +102,8 @@ def play(game_data) -> None:
         else:
             update_turn(game_data, board, choice1, choice2)
 
+
+if __name__ == "__main__":
+    game_data = init_game()
+    play(game_data)
+
