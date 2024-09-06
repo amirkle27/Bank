@@ -1,10 +1,16 @@
 import memory_game
 import pytest
 
+from memory_game import init_game
 
-game_data = memory_game.init_game()
-def test_len_cards ():
-    assert len(game_data ['cards']) == 16
+
+def test_game_initialization (game_data):
+    assert len(game_data ['cards_position']) == 16
+    assert game_data['rows'] == 4
+    assert game_data['columns'] == 4
+    assert game_data['turn'] == 'Player 1'
+    assert not game_data['game_over'] == True
+
 
 def test_choice1_not_choice2 ():
     choice1 = (1,1)
