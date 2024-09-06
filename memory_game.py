@@ -93,6 +93,7 @@ def play(game_data) -> None:
         # Check for match
         if board[choice1[0] - 1][choice1[1] - 1] == board[choice2[0] - 1][choice2[1] - 1]:
             update_match(game_data, card_index1, card_index2, turn)
+            game_data['move_history'].append((turn,choice1,choice2,'Match'))
 
             # If it's not the last match, print the match message and update the score
             if not check_game_over(game_data, matched, scores):
@@ -101,6 +102,8 @@ def play(game_data) -> None:
                 print(f"Keep going! It's {game_data['turn']}'s turn again!".center(50, "="))
         else:
             update_turn(game_data, board, choice1, choice2)
+            game_data['move_history'].append((turn,choice1,choice2,'No Match'))
+
 
 
 if __name__ == "__main__":
