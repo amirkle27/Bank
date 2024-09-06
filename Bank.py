@@ -1,10 +1,6 @@
 from datetime import datetime
-
-date_format = "%Y-%m-%d"
-
 from datetime import datetime
-
-
+date_format = "%Y-%m-%d"
 
 
 bank_accounts = {
@@ -104,8 +100,6 @@ def account_by_name ():
     else:
             print(f"\nNo accounts found for first name: {first_name}\n")
 
-
-
 def sorted_by_balance():
     sorted_accounts = (dict(sorted(bank_accounts.items(), key = lambda bank_accounts: bank_accounts[1]['balance'])))
     for account_number, details in sorted_accounts.items():
@@ -122,18 +116,13 @@ def history_transactions_sorted():
             print(f"{key.capitalize()}: {value}")
         print(f"-"* 100 + "\n")
 
-
 def today_transactions():
     today = datetime.today().date()  # Get today's date
-
-    # Loop through the accounts and extract transactions scheduled for today
     today_transactions = {
         account_number: details for account_number, details in bank_accounts.items()
         if any(datetime.strptime(txn[0], "%Y-%m-%d %H:%M:%S").date() == today for txn in
                details['transactions_to_execute'])
     }
-
-    # Check if any transactions were found for today and print them
     if today_transactions:
         print("Transactions scheduled for today:")
         for account_number, details in today_transactions.items():
@@ -144,7 +133,6 @@ def today_transactions():
             print("-" * 100 + "\n")
     else:
         print("\nNo transactions scheduled for today.\n")
-
 
 def negative_balance ():
     negative = filter(lambda bank_accounts: bank_accounts[1]['balance']<0, bank_accounts.items())
@@ -164,7 +152,6 @@ def all_balances ():
 
 def main_menu ():
     while True:
-
         operation: str = str(input(F"Hello, which operation would you like to perform? \nOpen an New Account [N] \nWork on an Existing Account [E] \nSee Bank Reports [R]\nQuit [Q]"))
         if operation.lower() == "n":
             try:
@@ -183,7 +170,6 @@ def main_menu ():
                 print("\nWrong Key. Please try again\n")
                 continue
             bank_accounts [new_account_number] = new_account
-
             print(f"New Account created successfully!\nAccount Number: {new_account_number}\nAccount Details: {bank_accounts[new_account_number]}")
         elif operation.lower() == "e":
             try:
@@ -224,7 +210,6 @@ def main_menu ():
                 else:
                     print("Sorry, this option is invalid")
                     continue
-
         elif operation.lower() == "r":
             try:
                 report_operation: int = int(input("Would you like to: \nDisplay all Bank Reports [Press 1]\
@@ -236,7 +221,6 @@ def main_menu ():
                       \nDisplay all Transactions from Today [Press 7]\
                        \nDisplay all Transactions with Negative Balance [Press 8]\
                         \nDisplay the Total Balance from all Accounts [Press 9]"))
-
                 match report_operation:
                     case 1: printing_accounts(bank_accounts)
                     case 2: account_by_number()
