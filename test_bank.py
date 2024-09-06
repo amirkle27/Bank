@@ -52,7 +52,7 @@ def test_printing_account_1003 (monkeypatch):
         "first_name": "Charles",
         "last_name": "Bronson",
         "id_number": "222014651",
-        "balance": -40000000.4,
+        "balance": 40000000.4,
         "transactions_to_execute": [("2024-09-06 10:05:00", 1003, 1001, 30000), ("2025-02-23 15:00:00", 1003, 1004, 400)],
         "transaction_history": [("2022-01-23 10:05:00", 1003, 1001, 30000), ("2022-02-23 15:00:00", 1003, 1002, 400)]
     }
@@ -79,24 +79,81 @@ def test_printing_account_1004 (monkeypatch):
     for key,value in expected_values.items():
         assert account[key] == value
 
-def test_id_1001 ():
+def test_account_by_id_1001 ():
     account_number = 1001
     account = bank_accounts[account_number]
     id = "123456789"
     assert id == account['id_number']
 
-def test_today ():
+def test_account_by_id_1002():
+    account_number = 1002
+    account = bank_accounts[account_number]
+    id = "987654321"
+    assert id == account['id_number']
+
+def test_account_by_id_1003():
+    account_number = 1003
+    account = bank_accounts[account_number]
+    id = "222014651"
+    assert id == account['id_number']
+
+def test_account_by_id_1004():
+    account_number = 1004
+    account = bank_accounts[account_number]
+    id = "323395176"
+    assert id == account['id_number']
+
+def test_account_by_name():
+    names = []
+    name = 'bob'
+    for account, details in bank_accounts.items():
+        if details['first_name']. lower() == name:
+            names.append(details['first_name'])
+    assert name.capitalize() in names
+
+def test_accounts_sorted_by_balance ():
+    sorted_accounts = (dict(sorted(bank_accounts.items(), key = lambda bank_accounts: bank_accounts[1]['balance'])))
+    balances = [account['balance'] for account in sorted_accounts.values()]
+    assert balances == sorted(balances)
+
+def test_accounts_sorted_by_transactions ():
+    sorted_accounts = (dict(sorted(bank_accounts.items(), key = lambda bank_accounts: bank_accounts[1]['transaction_history'])))
+    transactions = [account['transaction_history'] for account in sorted_accounts.values()]
+    assert transactions == sorted(transactions)
+
+def test_transactions_for_today ():
     account_number = 1003
     account = bank_accounts[account_number]
     today = datetime.today().date()
-
     assert any(datetime.strptime(txn[0], "%Y-%m-%d %H:%M:%S").date() == today for txn in account['transactions_to_execute'])
 
+def test_negative_balance ():
+    account_number = 1001
+    bank_accounts[account_number]['balance'] = -1000
+    negative = [details['balance'] for details in bank_accounts.values() if details['balance'] < 0]
+    assert bank_accounts[account_number]['balance'] in negative
 
+def test_total_balances ():
+    expected_total = sum(details['balance'] for details in bank_accounts.values())
+    total_balance = []
+    for account_number, details in bank_accounts.items():
+        total_balance.append(details['balance'])
+    assert sum(total_balance) == expected_total
 
+def test_new_account_creation_wrong_input(monkeypatch):
+    inputs = iter([123, 456, "abcdefghi", "100"])
+    def mock_input(prompt):
+        return next(inputs)
+    monkeypatch.setattr('builtins.input', mock_input)
 
-
-
-
-
-
+    with pytest.raises(ValueError):
+        new_account_number = int(max(bank_accounts.keys())+1)
+        new_account = sample_account.copy()
+        new_account.update({
+            "first_name": str(input("First Name: ")),
+            "last_name": str(input("Last Name: ")),
+            "id_number": int(input("ID_Number: ")),
+            "balance": float(input("Balance: ")),
+            "transactions_to_execute": [],
+            "transaction_history": [],
+            })
