@@ -109,4 +109,3 @@ def play(game_data) -> None:
 if __name__ == "__main__":
     game_data = init_game()
     play(game_data)
-
