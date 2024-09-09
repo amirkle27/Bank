@@ -87,15 +87,12 @@ def play(game_data) -> None:
                 break
             except (ValueError, IndexError, KeyError):
                 print("Invalid input. Please enter coordinates as X,Y within the grid.")
-
         display_board(board)
 
         # Check for match
         if board[choice1[0] - 1][choice1[1] - 1] == board[choice2[0] - 1][choice2[1] - 1]:
             update_match(game_data, card_index1, card_index2, turn)
-            game_data['move_history'].append((turn,choice1,choice2,'Match'))
-
-            # If it's not the last match, print the match message and update the score
+            game_data['move_history'].append((turn,choice1,choice2,'Match'))        
             if not check_game_over(game_data, matched, scores):
                 print("It's a match!".center(30, "-"))  # Only print match message if game isn't over
                 update_score(game_data, turn)
